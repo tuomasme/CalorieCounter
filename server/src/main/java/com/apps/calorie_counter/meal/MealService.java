@@ -14,4 +14,8 @@ public class MealService {
     public List<Meal> getAllMeals() {
         return mealRepository.findAll();
     }
+
+    public Meal getMealById(Long id) {
+        return mealRepository.findById(id).orElse(null);
+    }
 }
