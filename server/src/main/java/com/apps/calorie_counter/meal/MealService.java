@@ -19,4 +19,8 @@ public class MealService {
     public Optional<Meal> getMealById(Long id) {
         return mealRepository.findById(id);
     }
+
+    public Meal createMeal(Meal meal) {
+        return mealRepository.save(meal);
+    }
 }
