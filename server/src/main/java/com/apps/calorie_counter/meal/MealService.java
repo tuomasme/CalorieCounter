@@ -23,4 +23,12 @@ public class MealService {
     public Meal createMeal(Meal meal) {
         return mealRepository.save(meal);
     }
+
+    public void deleteMeal(Long id) {
+        if (mealRepository.existsById(id)) {
+            mealRepository.deleteById(id);
+        } else {
+            throw new RuntimeException("Meal not found with id: " + id);
+        }
+    }
 }

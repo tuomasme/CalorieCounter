@@ -30,4 +30,10 @@ public class MealController {
     public Meal createMeal(@RequestBody Meal meal) {
         return mealService.createMeal(meal);
     }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteMeal(@PathVariable Long id) {
+        mealService.deleteMeal(id);
+        return ResponseEntity.noContent().build();
+    }
 }
