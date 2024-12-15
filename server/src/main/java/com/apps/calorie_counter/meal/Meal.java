@@ -1,5 +1,6 @@
 package com.apps.calorie_counter.meal;
 
+import com.apps.calorie_counter.victual.Victual;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -7,6 +8,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Getter
 @Setter
@@ -22,7 +24,7 @@ public class Meal {
     private Long mealId;
     @Column(name = "meal_time")
     private LocalDateTime mealTime;
-    @Column(name = "meal_calories")
-    private Integer mealCalories;
+    @OneToMany(mappedBy="meal", cascade = CascadeType.ALL)
+    private List<Victual> victuals;
 
 }
