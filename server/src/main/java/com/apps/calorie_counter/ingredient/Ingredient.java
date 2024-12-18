@@ -16,14 +16,15 @@ import lombok.Setter;
 public class Ingredient {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "ingredient_id")
-    private Long ingredientId;
-    @Column(name = "ingredient_name")
-    private String ingredientName;
-    @Column(name = "ingredient_weight")
-    private Integer ingredientWeight;
-    private Double ingredientCalories;
-    @ManyToOne(fetch = FetchType.LAZY)
+    @Column(name = "id")
+    private Long id;
+    @Column(name = "name")
+    private String name;
+    @Column(name = "weight")
+    private Integer weight;
+    @Column(name = "calories")
+    private Double calories;
+    @ManyToOne
     @JoinColumn(name="victual_id", nullable=false)
     private Victual victual;
 }

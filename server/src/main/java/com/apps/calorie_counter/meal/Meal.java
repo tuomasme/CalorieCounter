@@ -20,11 +20,11 @@ public class Meal {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "meal_id")
-    private Long mealId;
-    @Column(name = "meal_time")
-    private LocalDateTime mealTime;
-    @OneToMany(mappedBy="meal", cascade = CascadeType.ALL)
+    @Column(name = "id")
+    private Long id;
+    @Column(name = "time")
+    private LocalDateTime time;
+    @OneToMany(mappedBy="meal", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Victual> victuals;
 
 }

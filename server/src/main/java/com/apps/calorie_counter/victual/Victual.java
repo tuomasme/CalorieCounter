@@ -19,15 +19,15 @@ import java.util.List;
 public class Victual {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "victual_id")
-    private Long victualId;
-    @Column(name = "victual_name")
-    private String victualName;
-    @Column(name = "victual_weight")
-    private Integer victualWeight;
-    @OneToMany(mappedBy = "victual", cascade = CascadeType.ALL)
+    @Column(name = "id")
+    private Long id;
+    @Column(name = "name")
+    private String name;
+    @Column(name = "weight")
+    private Integer weight;
+    @OneToMany(mappedBy = "victual", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Ingredient> ingredients;
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name="meal_id", nullable=false)
     private Meal meal;
 
