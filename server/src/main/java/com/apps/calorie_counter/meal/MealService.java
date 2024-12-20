@@ -34,7 +34,7 @@ public class MealService {
 
     public Meal updateMeal(Long id, Meal meal) {
         Meal existingMeal = mealRepository.findById(id).orElseThrow(() -> new RuntimeException("Meal not found"));
-        existingMeal.setMealTime(meal.getMealTime());
+        existingMeal.setTime(meal.getTime());
         return mealRepository.save(existingMeal);
     }
 }

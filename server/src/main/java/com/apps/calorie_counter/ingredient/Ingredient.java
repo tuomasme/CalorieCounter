@@ -1,6 +1,7 @@
 package com.apps.calorie_counter.ingredient;
 
 import com.apps.calorie_counter.victual.Victual;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -24,7 +25,8 @@ public class Ingredient {
     private Integer weight;
     @Column(name = "calories")
     private Double calories;
+    @JsonBackReference
     @ManyToOne
-    @JoinColumn(name="victual_id", nullable=false)
+    @JoinColumn(name="victual_id", referencedColumnName = "id")
     private Victual victual;
 }

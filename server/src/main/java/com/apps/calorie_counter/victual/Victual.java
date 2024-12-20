@@ -2,6 +2,7 @@ package com.apps.calorie_counter.victual;
 
 import com.apps.calorie_counter.ingredient.Ingredient;
 import com.apps.calorie_counter.meal.Meal;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -27,8 +28,9 @@ public class Victual {
     private Integer weight;
     @OneToMany(mappedBy = "victual", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Ingredient> ingredients;
+    @JsonBackReference
     @ManyToOne
-    @JoinColumn(name="meal_id", nullable=false)
+    @JoinColumn(name="meal_id", referencedColumnName = "id")
     private Meal meal;
 
 }
