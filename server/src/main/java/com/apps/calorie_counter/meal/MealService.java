@@ -37,4 +37,9 @@ public class MealService {
         existingMeal.setTime(meal.getTime());
         return mealRepository.save(existingMeal);
     }
+
+    public List<IMealCalories> getMealsWithCalories() {
+        return mealRepository.getMealsWithCalories();
+    }
+
 }
