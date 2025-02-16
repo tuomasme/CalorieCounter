@@ -44,4 +44,8 @@ public class MealController {
         return ResponseEntity.ok(updatedMeal);
     }
 
+    @GetMapping("/calories")
+    public List<IMealCalories> getMealsWithCalories() {
+        return mealService.getMealsWithCalories();
+    }
 }
