@@ -33,4 +33,9 @@ public class Victual {
     @JoinColumn(name="meal_id", referencedColumnName = "id")
     private Meal meal;
 
+    public void addIngredients(List<Ingredient> ingredients) {
+        this.ingredients = ingredients;
+        this.ingredients.forEach(i -> i.setVictual(this));
+    }
+
 }

@@ -27,4 +27,9 @@ public class Meal {
     @OneToMany(mappedBy="meal", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Victual> victuals;
 
+    public void addVictuals(List<Victual> victuals) {
+        this.victuals = victuals;
+        this.victuals.forEach(v -> v.setMeal(this));
+    }
+
 }

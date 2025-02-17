@@ -2,6 +2,7 @@ package com.apps.calorie_counter.meal;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RequestBody;
 
 import java.util.List;
 import java.util.Optional;
@@ -20,7 +21,9 @@ public class MealService {
         return mealRepository.findById(id);
     }
 
-    public Meal createMeal(Meal meal) {
+    public Meal createMeal(@RequestBody Meal meal) {
+        meal.addVictuals(meal.getVictuals());
+        meal.getVictuals().forEach(v -> v.addIngredients(v.getIngredients()));
         return mealRepository.save(meal);
     }
 
