@@ -5,3 +5,9 @@ export const getMeals = () => {
     method: "GET",
   });
 };
+
+export const getMealsWithCalories = () => {
+  return fetch(REST_API_BASE_URL + `/meals/calories`, {
+    method: "GET",
+  });
+};
