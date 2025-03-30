@@ -24,9 +24,7 @@ public class Victual {
     private Long id;
     @Column(name = "name")
     private String name;
-    @Column(name = "weight")
-    private Integer weight;
-    @OneToMany(mappedBy = "victual", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "victual", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<Ingredient> ingredients;
     @JsonBackReference
     @ManyToOne

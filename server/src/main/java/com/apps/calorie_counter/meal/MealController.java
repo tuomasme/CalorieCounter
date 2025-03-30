@@ -44,8 +44,13 @@ public class MealController {
         return ResponseEntity.ok(updatedMeal);
     }
 
-    @GetMapping("/calories")
-    public List<IMealCalories> getMealsWithCalories() {
-        return mealService.getMealsWithCalories();
+    @GetMapping("/total-calories")
+    public List<IMealTotalCalories> getMealTotalCalories() {
+        return mealService.getMealTotalCalories();
+    }
+
+    @GetMapping("/with-victuals-and-ingredients/{id}")
+    public List<IMeal> getMealWithVictualsAndIngredientsById(@PathVariable Long id) {
+        return mealService.getMealWithVictualsAndIngredientsById(id);
     }
 }

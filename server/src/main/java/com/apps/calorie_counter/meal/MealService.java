@@ -41,8 +41,12 @@ public class MealService {
         return mealRepository.save(existingMeal);
     }
 
-    public List<IMealCalories> getMealsWithCalories() {
-        return mealRepository.getMealsWithCalories();
+    public List<IMealTotalCalories> getMealTotalCalories() {
+        return mealRepository.getMealTotalCalories();
+    }
+
+    public List<IMeal> getMealWithVictualsAndIngredientsById(Long id) {
+        return mealRepository.getMealWithVictualsAndIngredientsById(id);
     }
 
 }
