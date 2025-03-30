@@ -24,13 +24,16 @@ public class Victual {
     private Long id;
     @Column(name = "name")
     private String name;
-    @Column(name = "weight")
-    private Integer weight;
-    @OneToMany(mappedBy = "victual", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "victual", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<Ingredient> ingredients;
     @JsonBackReference
     @ManyToOne
     @JoinColumn(name="meal_id", referencedColumnName = "id")
     private Meal meal;
+
+    public void addIngredients(List<Ingredient> ingredients) {
+        this.ingredients = ingredients;
+        this.ingredients.forEach(i -> i.setVictual(this));
+    }
 
 }

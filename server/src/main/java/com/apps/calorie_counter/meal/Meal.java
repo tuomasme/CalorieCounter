@@ -24,7 +24,12 @@ public class Meal {
     private Long id;
     @Column(name = "time")
     private LocalDateTime time;
-    @OneToMany(mappedBy="meal", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy="meal", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<Victual> victuals;
+
+    public void addVictuals(List<Victual> victuals) {
+        this.victuals = victuals;
+        this.victuals.forEach(v -> v.setMeal(this));
+    }
 
 }
