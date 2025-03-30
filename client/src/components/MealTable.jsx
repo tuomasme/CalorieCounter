@@ -1,16 +1,28 @@
 import moment from "moment";
 import { useEffect, useState } from "react";
-import { getMealsWithCalories } from "../api/MealService";
+import {
+  getMealsWithCalories,
+  getMealWithVictualsAndIngredients,
+} from "../services/MealService";
 
-const MealTable = () => {
+const MealTable = ({ handleOpen }) => {
   const [mealsWithCalories, setmealsWithCalories] = useState([]);
 
   useEffect(() => {
     getMealsWithCalories()
-      .then((res) => res.json())
-      .then((d) => {
-        console.log(d);
-        setmealsWithCalories(d);
+      .then((res) => {
+        console.log(res.data);
+        setmealsWithCalories(res.data);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  }, []);
+
+  useEffect(() => {
+    getMealWithVictualsAndIngredients("5") // Testing
+      .then((res) => {
+        console.log(res.data);
       })
       .catch((error) => {
         console.log(error);
@@ -34,7 +46,12 @@ const MealTable = () => {
                   <td>{moment(meal.mealTime).format("DD.MM.YYYY hh:mm")}</td>
                   <td>{meal.mealCalories}</td>
                   <td>
-                    <button className="btn btn-info">Update</button>
+                    <button
+                      className="btn btn-info"
+                      onClick={() => handleOpen("edit")}
+                    >
+                      Update
+                    </button>
                   </td>
                   <td>
                     <button className="btn btn-secondary">Delete</button>
