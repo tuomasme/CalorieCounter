@@ -1,4 +1,3 @@
-import { queryOptions } from "@tanstack/react-query";
 import axios from "axios";
 
 const REST_API_BASE_URL = "http://localhost:8080/api";
@@ -19,4 +18,9 @@ export const getMealWithVictualsAndIngredients = (mealId) => {
   return axios.get(
     REST_API_BASE_URL + `/meals/with-victuals-and-ingredients/` + mealId
   );
+};
+
+export const deleteMeal = (id) => {
+  console.log(`http://localhost:3000/api/meals/${id}`);
+  return axios.delete(REST_API_BASE_URL + `/meals/${id}`);
 };

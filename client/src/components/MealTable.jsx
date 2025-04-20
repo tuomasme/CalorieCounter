@@ -1,9 +1,33 @@
 import moment from "moment";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { getMealsWithCaloriesQuery } from "../querys/querys";
+import { useState } from "react";
+import { deleteMeal } from "../services/MealService";
 
-const MealTable = ({ handleOpen, setMealsWithCalories }) => {
+const MealTable = ({ handleOpen }) => {
+  const queryClient = useQueryClient();
   const { data } = useQuery(getMealsWithCaloriesQuery());
+  const [setError, error] = useState(null);
+
+  const { mutate: deleteMealMutate } = useMutation({
+    mutationFn: deleteMeal,
+    onSuccess: () => {
+      queryClient.invalidateQueries([getMealsWithCaloriesQuery]);
+    },
+  });
+
+  const handleDelete = (id) => {
+    const confirmDelete = window.confirm(
+      "Are you sure you want to delete this meal?"
+    );
+    if (confirmDelete) {
+      try {
+        deleteMealMutate(id);
+      } catch (err) {
+        setError(err.message);
+      }
+    }
+  };
 
   return (
     <>
@@ -30,7 +54,12 @@ const MealTable = ({ handleOpen, setMealsWithCalories }) => {
                     </button>
                   </td>
                   <td>
-                    <button className="btn btn-secondary">Delete</button>
+                    <button
+                      className="btn btn-secondary"
+                      onClick={() => handleDelete(meal.mealId)}
+                    >
+                      Delete
+                    </button>
                   </td>
                 </tr>
               ))}
