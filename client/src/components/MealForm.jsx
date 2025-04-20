@@ -1,6 +1,9 @@
 import { useForm, useFieldArray, FormProvider } from "react-hook-form";
 import IngredientFields from "./IngredientFields";
 import { useState } from "react";
+import { createMeal } from "../services/MealService";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { getMealsWithCaloriesQuery } from "../querys/querys";
 
 const defaultValues = {
   victuals: [
@@ -9,11 +12,21 @@ const defaultValues = {
 };
 
 const MealForm = ({ isOpen, onClose, mode, OnSubmit }) => {
+  const queryClient = useQueryClient();
   const [victualCount, setVictualCount] = useState(1);
+
   const form = useForm({
     defaultValues,
   });
-  const { control, handleSubmit, register } = form;
+
+  const {
+    control,
+    handleSubmit,
+    register,
+    reset,
+    formState: { errors },
+  } = form;
+
   const {
     fields,
     append: appendVictual,
@@ -23,8 +36,16 @@ const MealForm = ({ isOpen, onClose, mode, OnSubmit }) => {
     name: "victuals",
   });
 
+  const { mutate: createMealMutate } = useMutation({
+    mutationFn: createMeal,
+    onSuccess: () => {
+      queryClient.invalidateQueries([getMealsWithCaloriesQuery]);
+    },
+  });
+
   const onSubmit = (data) => {
-    console.log(data);
+    createMealMutate(data);
+    reset();
     OnSubmit();
   };
 
@@ -52,7 +73,7 @@ const MealForm = ({ isOpen, onClose, mode, OnSubmit }) => {
                     <span className="label-text">Meal Time</span>
                   </div>
                   <input
-                    {...register("mealTime", {
+                    {...register("time", {
                       required: "Meal time is required",
                     })}
                     type="datetime-local"
@@ -60,6 +81,11 @@ const MealForm = ({ isOpen, onClose, mode, OnSubmit }) => {
                   />
                 </label>
               </div>
+              {errors.mealTime && (
+                <div className="flex mb-4 justify-center text-red-500">
+                  {errors.mealTime.message}
+                </div>
+              )}
               <div>
                 {fields.map((field, index) => (
                   <fieldset key={field.id}>

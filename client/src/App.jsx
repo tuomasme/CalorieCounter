@@ -6,6 +6,7 @@ import MealForm from "./components/MealForm";
 export default function App() {
   const [isOpen, setIsOpen] = useState(false);
   const [modalMode, setModalMode] = useState("add");
+  const [mealsWithCalories, setMealsWithCalories] = useState([]);
 
   const handleOpen = (mode) => {
     setModalMode(mode);
@@ -24,13 +25,15 @@ export default function App() {
   return (
     <>
       <NavBar onOpen={() => handleOpen("add")} />
-      <MealTable handleOpen={handleOpen} />
+      <MealTable
+        setMealsWithCalories={setMealsWithCalories}
+        mealsWithCalories={mealsWithCalories}
+        handleOpen={handleOpen}
+      />
       <MealForm
         isOpen={isOpen}
         OnSubmit={handleSubmit}
-        onClose={(event) => {
-          setIsOpen(false);
-        }}
+        onClose={() => setIsOpen(false)}
         mode={modalMode}
       />
     </>

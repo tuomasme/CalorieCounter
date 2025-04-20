@@ -1,37 +1,13 @@
 import moment from "moment";
-import { useEffect, useState } from "react";
-import {
-  getMealsWithCalories,
-  getMealWithVictualsAndIngredients,
-} from "../services/MealService";
+import { useQuery } from "@tanstack/react-query";
+import { getMealsWithCaloriesQuery } from "../querys/querys";
 
-const MealTable = ({ handleOpen }) => {
-  const [mealsWithCalories, setmealsWithCalories] = useState([]);
-
-  useEffect(() => {
-    getMealsWithCalories()
-      .then((res) => {
-        console.log(res.data);
-        setmealsWithCalories(res.data);
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-  }, []);
-
-  useEffect(() => {
-    getMealWithVictualsAndIngredients("5") // Testing
-      .then((res) => {
-        console.log(res.data);
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-  }, []);
+const MealTable = ({ handleOpen, setMealsWithCalories }) => {
+  const { data } = useQuery(getMealsWithCaloriesQuery());
 
   return (
     <>
-      {mealsWithCalories ? (
+      {data ? (
         <div className="overflow-x-auto mt-10">
           <table className="table">
             <thead>
@@ -41,14 +17,14 @@ const MealTable = ({ handleOpen }) => {
               </tr>
             </thead>
             <tbody>
-              {mealsWithCalories.map((meal) => (
+              {data.data.map((meal) => (
                 <tr key={meal.mealId} className="hover">
                   <td>{moment(meal.mealTime).format("DD.MM.YYYY hh:mm")}</td>
                   <td>{meal.mealCalories}</td>
                   <td>
                     <button
                       className="btn btn-info"
-                      onClick={() => handleOpen("edit")}
+                      onClick={() => handleOpen("edit", meal)}
                     >
                       Update
                     </button>
