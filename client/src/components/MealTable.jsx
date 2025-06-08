@@ -1,25 +1,37 @@
 import moment from "moment";
-import { useEffect, useState } from "react";
-import { getMealsWithCalories } from "../api/MealService";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { getMealsWithCaloriesQuery } from "../querys/querys";
+import { useState } from "react";
+import { deleteMeal } from "../services/MealService";
 
-const MealTable = () => {
-  const [mealsWithCalories, setmealsWithCalories] = useState([]);
+const MealTable = ({ handleOpen }) => {
+  const queryClient = useQueryClient();
+  const { data } = useQuery(getMealsWithCaloriesQuery());
+  const [setError, error] = useState(null);
 
-  useEffect(() => {
-    getMealsWithCalories()
-      .then((res) => res.json())
-      .then((d) => {
-        console.log(d);
-        setmealsWithCalories(d);
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-  }, []);
+  const { mutate: deleteMealMutate } = useMutation({
+    mutationFn: deleteMeal,
+    onSuccess: () => {
+      queryClient.invalidateQueries([getMealsWithCaloriesQuery]);
+    },
+  });
+
+  const handleDelete = (id) => {
+    const confirmDelete = window.confirm(
+      "Are you sure you want to delete this meal?"
+    );
+    if (confirmDelete) {
+      try {
+        deleteMealMutate(id);
+      } catch (err) {
+        setError(err.message);
+      }
+    }
+  };
 
   return (
     <>
-      {mealsWithCalories ? (
+      {data ? (
         <div className="overflow-x-auto mt-10">
           <table className="table">
             <thead>
@@ -29,15 +41,25 @@ const MealTable = () => {
               </tr>
             </thead>
             <tbody>
-              {mealsWithCalories.map((meal) => (
+              {data.data.map((meal) => (
                 <tr key={meal.mealId} className="hover">
                   <td>{moment(meal.mealTime).format("DD.MM.YYYY hh:mm")}</td>
                   <td>{meal.mealCalories}</td>
                   <td>
-                    <button className="btn btn-info">Update</button>
+                    <button
+                      className="btn btn-info"
+                      onClick={() => handleOpen("edit", meal)}
+                    >
+                      Update
+                    </button>
                   </td>
                   <td>
-                    <button className="btn btn-secondary">Delete</button>
+                    <button
+                      className="btn btn-secondary"
+                      onClick={() => handleDelete(meal.mealId)}
+                    >
+                      Delete
+                    </button>
                   </td>
                 </tr>
               ))}
