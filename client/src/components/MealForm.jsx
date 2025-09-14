@@ -44,9 +44,14 @@ const MealForm = ({ isOpen, onClose, mode, OnSubmit }) => {
   });
 
   const onSubmit = (data) => {
-    createMealMutate(data);
+    if (mode == "add") {
+      console.log(mode);
+      createMealMutate(data);
+    } else {
+      console.log(mode);
+    }
     reset();
-    OnSubmit();
+    OnSubmit(data);
   };
 
   return (

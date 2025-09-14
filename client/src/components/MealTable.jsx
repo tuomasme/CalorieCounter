@@ -8,7 +8,7 @@ const MealTable = ({ handleOpen }) => {
   const queryClient = useQueryClient();
   const { data } = useQuery(getMealsWithCaloriesQuery());
   const [setError, error] = useState(null);
-
+  const [mealData, setMealData] = useState([]); //
   const { mutate: deleteMealMutate } = useMutation({
     mutationFn: deleteMeal,
     onSuccess: () => {
@@ -42,8 +42,8 @@ const MealTable = ({ handleOpen }) => {
             </thead>
             <tbody>
               {data.data.map((meal) => (
-                <tr key={meal.mealId} className="hover">
-                  <td>{moment(meal.mealTime).format("DD.MM.YYYY hh:mm")}</td>
+                <tr key={meal.id} className="hover">
+                  <td>{moment(meal.time).format("DD.MM.YYYY hh:mm")}</td>
                   <td>{meal.mealCalories}</td>
                   <td>
                     <button
@@ -56,7 +56,7 @@ const MealTable = ({ handleOpen }) => {
                   <td>
                     <button
                       className="btn btn-secondary"
-                      onClick={() => handleDelete(meal.mealId)}
+                      onClick={() => handleDelete(meal.id)}
                     >
                       Delete
                     </button>

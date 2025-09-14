@@ -21,6 +21,9 @@ export const getMealWithVictualsAndIngredients = (mealId) => {
 };
 
 export const deleteMeal = (id) => {
-  console.log(`http://localhost:3000/api/meals/${id}`);
   return axios.delete(REST_API_BASE_URL + `/meals/${id}`);
+};
+
+export const updateMeal = async (meal, mealId) => {
+  return axios.put(REST_API_BASE_URL + `/meals/${mealId}`, meal);
 };
