@@ -22,10 +22,12 @@ public class Victual {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private Long id;
-    @Column(name = "name")
-    private String name;
-    @OneToMany(mappedBy = "victual", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    @Column(name = "victual_name")
+    private String victualName;
+    @OneToMany(mappedBy = "victual", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Ingredient> ingredients;
+    @Column(name = "meal_id", updatable=false, insertable=false)
+    private Long mealId;
     @JsonBackReference
     @ManyToOne
     @JoinColumn(name="meal_id", referencedColumnName = "id")

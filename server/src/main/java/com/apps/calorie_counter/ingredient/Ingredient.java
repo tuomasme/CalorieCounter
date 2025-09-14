@@ -19,12 +19,12 @@ public class Ingredient {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private Long id;
-    @Column(name = "name")
-    private String name;
-    @Column(name = "weight")
-    private Integer weight;
-    @Column(name = "calories")
-    private Double calories;
+    @Column(name = "ingredient_name")
+    private String ingredientName;
+    @Column(name = "ingredient_weight")
+    private Integer ingredientWeight;
+    @Column(name = "ingredient_calories")
+    private Double ingredientCalories;
     @JsonBackReference
     @ManyToOne
     @JoinColumn(name="victual_id", referencedColumnName = "id")
