@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 
@@ -39,7 +40,7 @@ public class MealController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Meal> updateMeal(@PathVariable Long id, @RequestBody Meal meal) {
+    public ResponseEntity<Meal> updateMeal(@PathVariable Long id, @RequestBody Meal meal) throws IOException {
         Meal updatedMeal = mealService.updateMeal(id, meal);
         return ResponseEntity.ok(updatedMeal);
     }

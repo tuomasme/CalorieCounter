@@ -34,7 +34,7 @@ public class VictualService {
 
     public Victual updateVictual(Long id, Victual victual) {
         Victual existingVictual = victualRepository.findById(id).orElseThrow(() -> new RuntimeException("Victual not found"));
-        existingVictual.setName(victual.getName()); 
+        existingVictual.setVictualName(victual.getVictualName());
         existingVictual.setIngredients(victual.getIngredients());
         existingVictual.setMeal(victual.getMeal());
         return victualRepository.save(existingVictual);

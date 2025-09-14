@@ -29,9 +29,9 @@ public class IngredientService {
 
     public Ingredient updateIngredient(Long id, Ingredient ingredient) {
         Ingredient existingIngredient = ingredientRepository.findById(id).orElseThrow(() -> new RuntimeException("Ingredient not found"));
-        existingIngredient.setName(ingredient.getName());
-        existingIngredient.setWeight(ingredient.getWeight());
-        existingIngredient.setCalories(ingredient.getCalories());
+        existingIngredient.setIngredientName(ingredient.getIngredientName());
+        existingIngredient.setIngredientWeight(ingredient.getIngredientWeight());
+        existingIngredient.setIngredientCalories(ingredient.getIngredientCalories());
         existingIngredient.setVictual(ingredient.getVictual());
         return ingredientRepository.save(existingIngredient);
     }
