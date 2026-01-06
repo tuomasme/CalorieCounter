@@ -17,8 +17,8 @@ const IngredientFields = ({ fieldIndex }) => {
       <div className="flex justify-center">
         <legend>Victual Ingredients</legend>
       </div>
-      {ingredients.map((ingredient, index) => (
-        <section key={ingredient.id} className="mb-4">
+      {ingredients.map((field, index) => (
+        <section key={field.id} className="mb-4">
           <div className="flex justify-center">
             <label className="form-control w-full max-w-xs">
               <div className="label">
@@ -27,7 +27,7 @@ const IngredientFields = ({ fieldIndex }) => {
               <input
                 className="input input-bordered"
                 {...register(
-                  `victuals.${fieldIndex}.ingredients.${index}.name`
+                  `victuals.${fieldIndex}.ingredients.${index}.ingredientName`
                 )}
               />
             </label>
@@ -43,7 +43,10 @@ const IngredientFields = ({ fieldIndex }) => {
                 step="1"
                 className="input input-bordered"
                 {...register(
-                  `victuals.${fieldIndex}.ingredients.${index}.weight`
+                  `victuals.${fieldIndex}.ingredients.${index}.ingredientWeight`,
+                  {
+                    valueAsNumber: true,
+                  }
                 )}
               />
             </label>
@@ -57,25 +60,26 @@ const IngredientFields = ({ fieldIndex }) => {
                 step=".1"
                 className="input input-bordered"
                 {...register(
-                  `victuals.${fieldIndex}.ingredients.${index}.calories`
+                  `victuals.${fieldIndex}.ingredients.${index}.ingredientCalories`,
+                  {
+                    valueAsNumber: true,
+                  }
                 )}
               />
             </label>
           </div>
-          {ingredientCount > 1 ? (
-            <div className="flex justify-center">
-              <button
-                type="button"
-                className="btn btn-secondary w-full max-w-xs mt-2"
-                onClick={() => {
-                  removeIngredient(index);
-                  setIngredientCount(ingredientCount - 1);
-                }}
-              >
-                Remove
-              </button>
-            </div>
-          ) : null}
+          <div className="flex justify-center">
+            <button
+              type="button"
+              className="btn btn-secondary w-full max-w-xs mt-2"
+              onClick={() => {
+                removeIngredient(index);
+                setIngredientCount(ingredientCount - 1);
+              }}
+            >
+              Remove
+            </button>
+          </div>
         </section>
       ))}
       <div className="flex justify-center">
@@ -83,7 +87,11 @@ const IngredientFields = ({ fieldIndex }) => {
           type="button"
           className="btn btn-info w-full max-w-xs"
           onClick={() => {
-            appendIngredient({ name: "", weight: 0, calories: 0.0 });
+            appendIngredient({
+              ingredientName: "",
+              ingredientWeight: 0,
+              ingredientCalories: 0.0,
+            });
             setIngredientCount(ingredientCount + 1);
           }}
         >

@@ -4,19 +4,109 @@ import { useState } from "react";
 import { createMeal } from "../services/MealService";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { getMealsWithCaloriesQuery } from "../querys/querys";
+import { useAtom, useAtomValue } from "jotai";
+import {
+  isOpenAtom,
+  mealWholeDataAtom,
+  modalModeAtom,
+  selectedMealIdAtom,
+} from "../atoms/atoms";
 
-const defaultValues = {
-  victuals: [
-    { name: "", ingredients: [{ name: "", weight: 0, calories: 0.0 }] },
-  ],
-};
-
-const MealForm = ({ isOpen, onClose, mode, OnSubmit }) => {
+const MealForm = ({ OnSubmit }) => {
   const queryClient = useQueryClient();
   const [victualCount, setVictualCount] = useState(1);
+  const [isOpen, setIsOpen] = useAtom(isOpenAtom);
+  const mealDataW = useAtomValue(mealWholeDataAtom);
+  const mode = useAtomValue(modalModeAtom);
+  const selectedMealId = useAtomValue(selectedMealIdAtom);
+
+  // Merge objects
+  function merge(obj1, obj2) {
+    let merged = {
+      ...obj1,
+      ...obj2,
+    };
+    Object.keys(obj1)
+      .filter((k) => obj2.hasOwnProperty(k))
+      .forEach((k) => {
+        merged[k] = obj1[k] + "," + obj2[k];
+      });
+    return merged;
+  }
+
+  // Set existing victual names as default values for victual name fields
+  function handleVictualName() {
+    let intialdefaultValues = [];
+    let vName = {};
+    //var iName = { ingredients: [] };
+    var viName = [{}];
+    var victualDefaultValues = [];
+
+    if (mealDataW) {
+      // Iterate through object of objects
+      Object.entries(mealDataW).forEach(([key, val]) => {
+        vName = {};
+        // key = the name of the current key
+        // val = the value of the current key
+
+        let object = {
+          id: val.victualId,
+          victualName: val.victualName,
+          mealId: selectedMealId,
+          ingredients: [
+            {
+              id: val.ingredientId,
+              ingredientName: val.ingredientName,
+              ingredientWeight: val.ingredientWeight,
+              ingredientCalories: val.ingredientCalories,
+            },
+          ],
+        };
+
+        // Check if object with same victual exists
+        const i = intialdefaultValues.findIndex(
+          (e) => e.victualName === val.victualName
+        );
+        if (i > -1) {
+          // We found at least one object that we're looking for!
+          intialdefaultValues[i].ingredients.push({
+            id: val.ingredientId,
+            ingredientName: val.ingredientName,
+            ingredientWeight: val.ingredientWeight,
+            ingredientCalories: val.ingredientCalories,
+          });
+        } else {
+          intialdefaultValues.push(object);
+        }
+      });
+    }
+    // Remove duplicate victuals
+    victualDefaultValues = Array.from(
+      new Set(intialdefaultValues.map((o) => JSON.stringify(o)))
+    ).map((str) => JSON.parse(str));
+
+    return victualDefaultValues;
+  }
 
   const form = useForm({
-    defaultValues,
+    values: {
+      time: mode == "edit" && mealDataW[0]?.time ? mealDataW[0]?.time : "",
+      victuals:
+        mode == "edit"
+          ? handleVictualName()
+          : [
+              {
+                victualName: "",
+                ingredients: [
+                  {
+                    ingredientName: "",
+                    ingredientWeight: 0,
+                    ingredientCalories: 0.0,
+                  },
+                ],
+              },
+            ],
+    },
   });
 
   const {
@@ -50,8 +140,8 @@ const MealForm = ({ isOpen, onClose, mode, OnSubmit }) => {
     } else {
       console.log(mode);
     }
-    reset();
     OnSubmit(data);
+    reset();
   };
 
   return (
@@ -68,7 +158,7 @@ const MealForm = ({ isOpen, onClose, mode, OnSubmit }) => {
               <button
                 type="button"
                 className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2"
-                onClick={onClose}
+                onClick={() => setIsOpen(false)}
               >
                 ✕
               </button>
@@ -86,9 +176,9 @@ const MealForm = ({ isOpen, onClose, mode, OnSubmit }) => {
                   />
                 </label>
               </div>
-              {errors.mealTime && (
+              {errors.time && (
                 <div className="flex mb-4 justify-center text-red-500">
-                  {errors.mealTime.message}
+                  {errors.time.message}
                 </div>
               )}
               <div>
@@ -104,12 +194,21 @@ const MealForm = ({ isOpen, onClose, mode, OnSubmit }) => {
                         </div>
                         <input
                           className="input input-bordered"
-                          {...register(`victuals.${index}.name`)}
+                          {...register(`victuals.${index}.victualName`)}
                         />
                       </label>
                     </div>
+                    <input
+                      type="hidden"
+                      value={selectedMealId}
+                      {...register(`victuals.${index}.mealId`)}
+                    />
+                    <input
+                      type="hidden"
+                      {...register(`victuals.${index}.id`)}
+                    />
                     <IngredientFields fieldIndex={index} />
-                    {victualCount > 1 ? (
+                    {/* {victualCount > 1 ? (
                       <section className="mt-4 mb-6 flex justify-center gap-4">
                         <button
                           type="button"
@@ -156,7 +255,41 @@ const MealForm = ({ isOpen, onClose, mode, OnSubmit }) => {
                           Append Victual
                         </button>
                       </section>
-                    )}
+                    )} */}
+
+                    <section className="mt-4 mb-6 flex justify-center gap-4">
+                      <button
+                        type="button"
+                        className="btn btn-info w-1/3 max-w-xs"
+                        onClick={() => {
+                          appendVictual({
+                            victualName: "",
+                            ingredients: [
+                              {
+                                ingredientName: "",
+                                ingredientWeight: 0,
+                                ingredientCalories: 0.0,
+                                mealId: selectedMealId,
+                              },
+                            ],
+                          });
+                          setVictualCount(victualCount + 1);
+                        }}
+                      >
+                        Append Victual
+                      </button>
+                      <button
+                        type="button"
+                        className="btn btn-secondary w-1/3 max-w-xs"
+                        onClick={() => {
+                          console.log(index);
+                          removeVictual(index);
+                          setVictualCount(victualCount - 1);
+                        }}
+                      >
+                        Remove
+                      </button>
+                    </section>
                   </fieldset>
                 ))}
               </div>
