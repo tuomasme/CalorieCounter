@@ -11,5 +11,5 @@ public interface IngredientRepository extends JpaRepository<Ingredient, Long> {
     @Transactional
     @Modifying
     @Query(value = "DELETE FROM ingredients i WHERE i.id = ?1", nativeQuery = true)
-    void deleteRemovedIngredients(Long aLong);
+    void deleteRemovedIngredientById(Long ingredientId);
 }

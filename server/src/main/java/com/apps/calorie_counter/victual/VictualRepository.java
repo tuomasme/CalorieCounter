@@ -12,5 +12,5 @@ public interface VictualRepository extends JpaRepository<Victual, Long> {
     @Transactional
     @Modifying
     @Query(value = "DELETE FROM victuals v WHERE v.id = ?1", nativeQuery = true)
-    void deleteRemovedVictual(Long aLong);
+    void deleteRemovedVictualById(Long victualId);
 }
