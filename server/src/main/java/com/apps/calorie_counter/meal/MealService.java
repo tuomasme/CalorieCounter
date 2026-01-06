@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestBody;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 
@@ -46,11 +47,18 @@ public class MealService {
     }
 
     public Meal updateMeal(Long id, @RequestBody Meal meal) throws IOException {
-        //ObjectMapper objectMapper = new ObjectMapper();
+        ObjectMapper objectMapper = new ObjectMapper();
+        objectMapper.findAndRegisterModules();
 
         List<Victual> newVictualsList = new ArrayList<>();
+        List<Ingredient> newAllIngredientsList = new ArrayList<>();
         Meal existingMeal = mealRepository.findById(id).orElseThrow(() -> new RuntimeException("Meal not found"));
         existingMeal.setTime(meal.getTime());
+        HashSet<Long> victualsToRetain = new HashSet<>();
+        HashSet<Long> ingredientsToRetain = new HashSet<>();
+
+        //String jsonString = objectMapper.writeValueAsString(existingMeal);
+        //System.out.println(jsonString);
 
         // Update victuals
         for(Victual newVictual : meal.getVictuals()) {
@@ -58,6 +66,7 @@ public class MealService {
                 // Check if existing victual has changed
                 if(newVictual.getId() != null) {
                     if(newVictual.getId().equals(existingVictual.getId())){
+                        victualsToRetain.add(newVictual.getId());
                         existingVictual.setVictualName(newVictual.getVictualName());
                         existingVictual.setIngredients(newVictual.getIngredients());
                         // Check if ingredients of existing victuals have changed
@@ -65,6 +74,7 @@ public class MealService {
                             for(Ingredient newIngredient : newVictual.getIngredients()) {
                                 // Update existing ingredients of existing victuals
                                 if(newIngredient.getId() != null && newIngredient.getId().equals(existingIngredient.getId())) {
+                                    ingredientsToRetain.add(newIngredient.getId());
                                     existingIngredient.setIngredientName(newIngredient.getIngredientName());
                                     existingIngredient.setIngredientWeight(newIngredient.getIngredientWeight());
                                     existingIngredient.setIngredientCalories(newIngredient.getIngredientCalories());
@@ -73,6 +83,7 @@ public class MealService {
                                 } else if(newIngredient.getId() == null) {
                                     List<Ingredient> newIngredientsList = new ArrayList<>();
                                     newIngredientsList.add(newIngredient);
+                                    newAllIngredientsList.add(newIngredient);
                                     existingVictual.addIngredients(newIngredientsList);
                                 }
                             }
@@ -81,10 +92,13 @@ public class MealService {
                 // Add new victuals to list
                 } else {
                     newVictualsList.add(newVictual);
+                    newAllIngredientsList.addAll(newVictual.getIngredients());
                 }
             }
         }
+
         mealRepository.save(existingMeal);
+
         // Add new victuals of existing meal
         for (Victual v : newVictualsList) {
             v.setMeal(existingMeal);
@@ -93,20 +107,19 @@ public class MealService {
                 i.setVictual(v);
             }
         }
-        mealRepository.save(existingMeal);
 
-//        for (Victual v : existingMeal.getVictuals()) {
-//            victualIdList.add(v.getId());
-//        }
-//
-//        for(Victual v : existingMeal.getVictuals()) {
-//            if(!victualIdList.contains(v.getId())) {
-//                for (Ingredient i : v.getIngredients()) {
-//                    victualRepository.delete(v);
-//                }
-//            }
-//        }
-//        mealRepository.save(existingMeal);
+        // Delete removed victuals and ingredients of removed victuals
+        for(Victual v : existingMeal.getVictuals()) {
+            if(!victualsToRetain.contains(v.getId()) && !newVictualsList.contains(v)) {
+                for(Ingredient i : v.getIngredients()) {
+                    ingredientRepository.deleteRemovedIngredients(i.getId());
+                }
+                victualRepository.deleteRemovedVictual(v.getId());
+            }
+        }
+
+        //String jsonString2 = objectMapper.writeValueAsString(existingMeal);
+        //System.out.println(jsonString2);
 
         return mealRepository.save(existingMeal);
     }
